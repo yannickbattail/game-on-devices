@@ -39,7 +39,8 @@
   	} else {
   		$db = createNew($db, $_POST['email'], $_POST['password'], $_POST['game'], $_POST['pseudoInGame']);
   		saveDb($db, 'db_json/db.json');
-  		echo 'Your user has been created.';
+  		echo 'Your user has been created.<br />';
+		echo 'Now you can use the web player <a href="new.php">Let\'s play!</a>';
   	}
   } else {
   	?>
