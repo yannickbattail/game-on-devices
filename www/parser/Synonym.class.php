@@ -14,7 +14,7 @@ class Synonym {
 	private static function getIndex($wordIn) {
 		//echo "getting index for $wordIn";
 		//echo PHP_EOL;
-		$handle = fopen('th_en_US_new.idx', 'r');
+		$handle = fopen('parser/dico/th_en_US_new.idx', 'r');
 		$line = fgets($handle);
 		$line = fgets($handle);
 		$line = fgets($handle);
@@ -40,7 +40,7 @@ class Synonym {
 		if ($index === null) {
 			return array();
 		}
-		$handle = fopen('th_en_US_new.dat', 'r');
+		$handle = fopen('parser/dico/th_en_US_new.dat', 'r');
 		//echo "fseeking to $index";
 		//echo PHP_EOL;
 		fseek($handle, $index);
@@ -52,7 +52,7 @@ class Synonym {
 			$line = fgets($handle);
 			$ret[] = explode( '|', $line);
 		}
-		print_r($ret);
+		//print_r($ret);
 		return $ret;
 	}
 

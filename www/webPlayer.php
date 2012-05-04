@@ -43,9 +43,9 @@ function auth() {
 	      processData(this.responseText);
 	      return;
 	    }
+	  }
 	    // something went wrong
 	      alert(this.responseText+' ('+this.status+')');
-	  }
 	}
 	var client = new XMLHttpRequest();
 	client.onreadystatechange = handler;
