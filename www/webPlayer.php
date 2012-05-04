@@ -53,6 +53,13 @@ function auth() {
 	client.send();
 }
 
+function keySpeak(event) {
+  if (event.which == 13) {
+    speak();
+    return false;
+  }
+}
+
 function speak() {
   function processData(data) {
     try {
@@ -76,7 +83,6 @@ function speak() {
       if(this.status == 200 && this.responseText != null) {
         // success!
         processData(this.responseText);
-        return;
       }
       // something went wrong
       processData(null);
@@ -130,7 +136,7 @@ function speak() {
   </div>
   <div id="speakDiv" style="display: none;">
     <textarea id="response" cols="100" rows="10"></textarea><br />
-    <input type="text" id="speakText" value="" /> <input type="button" name="submit" value="Speak" onclick="speak()" />
+    <input type="text" id="speakText" value="" onkeydown="keySpeak(event)" /> <input type="button" name="submit" value="Speak" onclick="speak()" />
     <div id="info"></div>
   </div>
 </body>
