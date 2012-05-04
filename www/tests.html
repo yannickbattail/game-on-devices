@@ -2,9 +2,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>GOD tests</title>
 </head>
 <body>
+
 Hello tests:<br />
 <a style="background-color:red;" href="hello.php">Authentication error: Missing parameter email</a><br />
 <a style="background-color:red;" href="hello.php?email=">Authentication error: Missing parameter email</a><br />
@@ -14,6 +15,7 @@ Hello tests:<br />
 <a style="background-color:red;" href="hello.php?email=yannick&password=tot&pseudoInGame=tux&game=basic">Authentication failed.</a><br />
 <a style="background-color:red;" href="hello.php?email=yannick@gmail.com&password=tot&pseudoInGame=tux&game=ggggg">Authentication error: Game ggggg does not exists.</a><br />
 <a style="background-color:green;" href="hello.php?email=yannick@gmail.com&password=tot&pseudoInGame=tux&game=basic">ABCDEF</a><br />
+<br />
 Speak tests:<br />
 <a style="background-color:red;" href="speak.php">Missing parameter authKey</a><br />
 <a style="background-color:red;" href="speak.php?authKey=ABCDEF">Missing parameter question</a><br />

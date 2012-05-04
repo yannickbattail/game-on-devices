@@ -2,6 +2,8 @@
 
 session_start();
 
+include 'db_json/db_json_lib.php';
+
 function getInputParams() {
 	$params = array();
 	$in = $_REQUEST;
@@ -27,22 +29,28 @@ function getParam($in, $param) {
 	return $in[$param];
 }
 
-function authentication($user, $pass, $game) {
-	if ($user == 'yannick@gmail.com') {
-		if (is_dir('./games/'.$game)) {
-			return 'ABCDEF';
-		} else {
-			throw new AuthenticationException('Game '.$game.' does not exists.', 421);
+function checkAuthentication($email, $password, $game, $pseudoInGame) {
+	$db = loadDb();
+	foreach ($db as $key => $user) {
+		if (($user['email'] == $email) && ($user['password'] == $password) && ($user['game'] == $game) && ($user['pseudoInGame'] == $pseudoInGame)) {
+			return $key;
 		}
 	}
-	return null;
+	return false;
+}
+
+function authentication($user, $pass, $game, $pseudoInGame) {
+	if (is_dir('./games/'.$game) === false) {
+		throw new AuthenticationException('Game '.$game.' does not exists.', 421);
+	}
+	return checkAuthentication($user, $pass, $game, $pseudoInGame);
 }
 
 class AuthenticationException extends Exception {};
 
 try {
 	$params = getInputParams();
-	$authKey = authentication($params['email'], $params['password'], $params['game']);
+	$authKey = authentication($params['email'], $params['password'], $params['game'], $params['pseudoInGame']);
 
 	if ($authKey) {
 		$_SESSION['email'] = $params['email'];
