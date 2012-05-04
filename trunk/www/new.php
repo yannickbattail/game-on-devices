@@ -5,36 +5,44 @@
 <title>GOD - Game On Devices - new user?</title>
 </head>
 <body>
-<h1>GOD - Game On Devices</h1>
-<h2>new user? Let's try!</h2>
-<?php
+  <h1>GOD - Game On Devices</h1>
+  <h2>new user? Let's try!</h2>
+  <?php
 
-function checkIfExist($db, $email, $game, $pseudoInGame) {
-	foreach ($db as $key => $user) {
-		if (($user['email'] == $email) && ($user['game'] == $game) && ($user['pseudoInGame'] == $pseudoInGame)) {
-			return true;
-		}
-	}
-	return false;
-}
+  function checkIfExist($db, $email, $game, $pseudoInGame) {
+  	if (isset($db[$email]) && isset($db[$email]['games'][$game]) && isset($db[$email]['games'][$game][$pseudoInGame])) {
+  		return true;
+  	} else {
+  		return false;
+  	}
+  }
+  function createNew($db, $email, $password, $game, $pseudoInGame) {
+  	if (!isset($db[$email])) {
+  		$db[$email] = array();
+  		$db[$email]['creationDate'] = time();
+  		$db[$email]['password'] = $password;
+  		$db[$email]['games'] = array();
+  	}
+  	if (!isset($db[$email][$game])) {
+  		$db[$email]['games'][$game] = array();
+  	}
+  	$db[$email]['games'][$game][$pseudoInGame] = array();
+  	$db[$email]['games'][$game][$pseudoInGame]['creationDate'] = time();
+  	return $db;
+  }
 
-if (isset($_POST['submit'])) {
-	include 'db_json/db_json_lib.php';
-	$db = loadDb('db_json/db.json', true);
-	if (checkIfExist($db, $_POST['email'], $_POST['game'], $_POST['pseudoInGame'])) {
-		echo 'Your already subscribe to this game with this pseudo.';
-	} else {
-	$db[] = array(
-		'email' => $_POST['email'],
-		'password' => $_POST['password'],
-		'game' => $_POST['game'],
-		'pseudoInGame' => $_POST['pseudoInGame'],
-	);
-	saveDb($db, 'db_json/db.json');
-	echo 'Your user has been created.';
-	}
-} else {
-?>
+  if (isset($_POST['submit'])) {
+  	include 'db_json/db_json_lib.php';
+  	$db = loadDb('db_json/db.json', true);
+  	if (checkIfExist($db, $_POST['email'], $_POST['game'], $_POST['pseudoInGame'])) {
+  		echo 'Your already subscribe to this game with this pseudo.';
+  	} else {
+  		$db = createNew($db, $_POST['email'], $_POST['password'], $_POST['game'], $_POST['pseudoInGame']);
+  		saveDb($db, 'db_json/db.json');
+  		echo 'Your user has been created.';
+  	}
+  } else {
+  	?>
   <form action="" method="post">
     <table>
       <tr>
