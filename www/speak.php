@@ -2,7 +2,7 @@
 
 session_start();
 
-include 'gameInterface/Response.class.php';
+include_once 'gameInterface/Response.class.php';
 
 function getInputParams() {
 	$params = array();
@@ -62,14 +62,11 @@ function gameInterface($question) {
  */
 function execGame(array $userEnv, array $texts) {
 	// load game
-	// include();
-	// $game = new class...();
-	//$response = $game->do($userEnv, $texts);
-	$response = new Response();
-	$response->message = 'bonjour '.$userEnv['pseudoInGame'].' ('.$userEnv['email'].') bienvenue dans le jeux '.$userEnv['game']
-	.'. vous m avez dit: '.$texts['originalText'];
-	$response->status = 200;
-	$response->info = 'info';
+	$classname = ucfirst($userEnv['game']);
+	include 'games/'.$userEnv['game'].'/'.$classname.'.class.php';
+	$game = new $classname();
+	$response = $game->speak($userEnv, $texts);
+
 	return $response;
 }
 

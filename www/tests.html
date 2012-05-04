@@ -12,14 +12,18 @@ Hello tests:<br />
 <a style="background-color:red;" href="hello.php?email=yannick@gmail.com">Authentication error: Missing parameter password</a><br />
 <a style="background-color:red;" href="hello.php?email=yannick@gmail.com&password=tot">Authentication error: Missing parameter pseudoInGame</a><br />
 <a style="background-color:red;" href="hello.php?email=yannick@gmail.com&password=tot&pseudoInGame=tux">Authentication error: Missing parameter game</a><br />
-<a style="background-color:red;" href="hello.php?email=yannick&password=tot&pseudoInGame=tux&game=basic">Authentication failed.</a><br />
 <a style="background-color:red;" href="hello.php?email=yannick@gmail.com&password=tot&pseudoInGame=tux&game=ggggg">Authentication error: Game ggggg does not exists.</a><br />
+<a style="background-color:red;" href="hello.php?email=yannick@gmail.comm&password=tot&pseudoInGame=tux&game=basic">Authentication error: Wrong email.</a><br />
+<a style="background-color:red;" href="hello.php?email=yannick@gmail.com&password=toto&pseudoInGame=tux&game=basic">Authentication error: Wrong password.</a><br />
+<a style="background-color:red;" href="hello.php?email=yannick@gmail.com&password=tot&pseudoInGame=tuxx&game=parrot">Authentication error: Please subscribe to this game.</a><br />
+<a style="background-color:red;" href="hello.php?email=yannick@gmail.com&password=tot&pseudoInGame=tuxx&game=basic">Authentication error: Wrong pseudo for the game: basic</a><br />
 <a style="background-color:green;" href="hello.php?email=yannick@gmail.com&password=tot&pseudoInGame=tux&game=basic">ABCDEF</a><br />
 <br />
 Speak tests:<br />
 <a style="background-color:red;" href="speak.php">Missing parameter authKey</a><br />
 <a style="background-color:red;" href="speak.php?authKey=ABCDEF">Missing parameter question</a><br />
 <a style="background-color:red;" href="speak.php?authKey=a&question=salut">Wrong authKey.</a><br />
-<a style="background-color:green;" href="speak.php?authKey=ABCDEF&question=salut">bonjour moi (yannick@gmail.com) bienvenue dans le jeux basic. vous m avez dit: salut</a><br />
+<a style="background-color:green;" href="speak.php?authKey=ABCDEF&format=html&question=salut">200 SALUT bonjour moi (yannick@gmail.com) bienvenue dans le jeux basic. vous m avez dit: salut</a><br />
+<a style="background-color:green;" href="speak.php?authKey=ABCDEF&question=salut">SALUT</a><br />
 </body>
 </html>

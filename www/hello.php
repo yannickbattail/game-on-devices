@@ -31,12 +31,19 @@ function getParam($in, $param) {
 
 function checkAuthentication($email, $password, $game, $pseudoInGame) {
 	$db = loadDb();
-	foreach ($db as $key => $user) {
-		if (($user['email'] == $email) && ($user['password'] == $password) && ($user['game'] == $game) && ($user['pseudoInGame'] == $pseudoInGame)) {
-			return $key;
-		}
+	if (!isset($db[$email])) {
+		throw new AuthenticationException('Wrong email.', 421);
 	}
-	return false;
+	if ($db[$email]['password'] != $password) {
+		throw new AuthenticationException('Wrong password.', 421);
+	}
+	if (!isset($db[$email]['games'][$game])) {
+		throw new AuthenticationException('Please subscribe to this game.', 421);
+	}
+	if (!isset($db[$email]['games'][$game][$pseudoInGame])) {
+		throw new AuthenticationException('Wrong pseudo for the game: '.$game, 421);
+	}
+	return 'ABCDEF';
 }
 
 function authentication($user, $pass, $game, $pseudoInGame) {
