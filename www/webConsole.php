@@ -95,10 +95,11 @@ function speak() {
         var obj = eval('('+data+')');
         if (obj.status) {
           //get('response').value += 'moi: '+getV('speakText')+"\nGame: "+obj.message+"\n";
-          get('response').innerHTML += getV('pseudoInGame')+'@'+getSel('game')+'&gt;'+getV('speakText')+'<br />'+obj.message+'<br />';
+          get('response').innerHTML += getV('pseudoInGame')+'@'+getSel('game')+'&gt;'+getV('speakText')+'<br /> ';
           get('response').scrollTop = 99999;
           get('speakText').value = '';
           get('info').innerHTML = obj.info;
+          typeWriter(obj.message);
         } else {
           alert('no obj.authKey: '+obj);
         }
@@ -126,6 +127,27 @@ function speak() {
 	  client.send();
   }
 }
+
+function typeWriter(txt) {
+  var text = txt;
+  var delay = 100;
+  var charNb = 0;
+  
+  function type1char() {
+    if (charNb < txt.length) {
+      get('response').innerHTML += txt[charNb];
+      get('response').scrollTop = 99999;
+      charNb++;
+      setTimeout(type1char, delay);
+    } else {
+      get('response').innerHTML += '<br />';
+      get('response').scrollTop = 99999;
+    }
+  }
+  setTimeout(type1char, delay);  
+}
+
+
 </script>
 </head>
 <body>
