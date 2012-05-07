@@ -1,8 +1,11 @@
 <?php
 
-session_start();
-
+include_once 'db_json/db_json_lib.php';
+include_once 'gameInterface/UserEnv.class.php';
+include_once 'gameInterface/Question.class.php';
 include_once 'gameInterface/Response.class.php';
+include_once 'gameInterface/QuestionTreatment.class.php';
+include_once 'gameInterface/Game.interface.php';
 
 function getInputParams() {
 	$params = array();
@@ -28,66 +31,75 @@ function getParam($in, $param) {
 }
 
 function checkAuthKey($authKey) {
-	// other check .......
-	if ($authKey != $_SESSION['authKey']) {
+	$db_sessions = loadDb('db_json/db_sessions.json');
+	if (!isset($db_sessions[$authKey])) {
 		throw new Exception('Wrong authKey.', 401);
 	}
+	if ($db_sessions[$authKey]['lastAccess'] < (time() - 3600)) {
+		throw new Exception('Authentication timeout. Must re-login.', 401);
+	}
+	$db_sessions[$authKey]['lastAccess'] = time();
+	$ue = new UserEnv();
+	$ue->email = $db_sessions[$authKey]['email'];
+	$ue->pseudoInGame = $db_sessions[$authKey]['pseudoInGame'];
+	$ue->game = $db_sessions[$authKey]['game'];
+	$ue->data = $db_sessions[$authKey]['data'];
+	$db_sessions[$authKey]['lastAccess'] = time();
+	saveDb($db_sessions, 'db_json/db_sessions.json');
+	return $ue;
 }
 
 function getUserEnv($authKey) {
-	$userEnv['email'] = $_SESSION['email'];
-	$userEnv['pseudoInGame'] = $_SESSION['pseudoInGame'];
-	$userEnv['game'] = $_SESSION['game'];
-	// maybe get UserEnv in DB ..... or else
-	return $userEnv;
+	$db_sessions = loadDb('db_json/db_sessions.json');
+	$ue= new UserEnv();
+	$ue->email = $db_sessions[$authKey]['email'];
+	$ue->pseudoInGame = $db_sessions[$authKey]['pseudoInGame'];
+	$ue->game = $db_sessions[$authKey]['game'];
+	return $ue;
 }
 
 function gameInterface($question) {
-	// synonymes
-	$syn = array(
-	'originalText' => $question,
-	'splitedText' => explode(' ', $question),
-	'synonyms' => array('word1' => array(),'word2' => array()),
-	);
-
-	return $syn;
+	return QuestionTreatment::treat($question);
 }
 
 /**
  *
  * Enter description here ...
- * @param array $userEnv
- * @param array $texts
+ * @param UserEnv $userEnv
+ * @param Question $question
  * @return Response
  */
-function execGame(array $userEnv, array $texts) {
+function execGame(UserEnv $userEnv, Question $question) {
 	// load game
-	$classname = ucfirst($userEnv['game']);
-	include 'games/'.$userEnv['game'].'/'.$classname.'.class.php';
+	$classname = ucfirst($userEnv->game);
+	include 'games/'.$userEnv->game.'/'.$classname.'.class.php';
 	$game = new $classname();
-	$response = $game->speak($userEnv, $texts);
+	$response = $game->speak($userEnv, $question);
 
 	return $response;
+}
+
+function outputInFormat(Response $response, $format) {
+	if ($format == 'json') {
+		header("Content-Type: application/json");
+		return json_encode($response);
+	} else if ($format == 'html') {
+		header("Content-Type: text/html");
+		return '<html><head><title>GOD</title></head><body><div class="status">'.$response->status.'</div><div class="message">'.$response->message.'</div><div class="info">'.$response->info.'</div></body>';
+	} else {
+		header("Content-Type: text/plain");
+		return $response->message;
+	}
 }
 
 try {
 	$params = getInputParams();
 	checkAuthKey($params['authKey']);
 	$userEnv = getUserEnv($params['authKey']);
-	$texts = gameInterface($params['question']);
-	$response = execGame($userEnv, $texts);
-
-	if ($params['format'] == 'json') {
-		header("Content-Type: application/json");
-		echo json_encode($response);
-	} else if ($params['format'] == 'html') {
-		header("Content-Type: text/html");
-		echo '<html><head><title>GOD</title></head><body><div class="status">'.$response->status.'</div><div class="message">'.$response->message.'</div><div class="info">'.$response->info.'</div></body>';
-	} else {
-		header("Content-Type: text/plain");
-		echo $response->message;
-	}
+	$question = gameInterface($params['question']);
+	$response = execGame($userEnv, $question);
+	print(outputInFormat($response, $params['format']));
 } catch (Exception $e) {
 	header("HTTP/1.1 500 Internal Server Error");
-	echo $e->getMessage();
+	print($e->getMessage());
 }

@@ -1,13 +1,19 @@
 <?php
 
-require_once('parser/Synonym.class.php');
 
-Class Parrot2 {
-	public function speak($userEnv, $texts) {
+Class Parrot2 implements Game {
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param UserEnv $userEnv
+	 * @param Question $question
+	 * @return Response
+	 */
+	public function speak(UserEnv $userEnv, Question $question) {
 		$response = new Response();
-		$syns = Synonym::getSynonyms(strtolower($texts['originalText']));
+		$syns = $question->synonyms;
 		if (count($syns) == 0)
-			$response->message = $texts['originalText'];
+			$response->message = $question->originalText;
 		else
 		{
 			foreach ($syns as $synSubKey => $synSubValue)
@@ -18,8 +24,8 @@ Class Parrot2 {
 			$response->message = $syns[$y][$x];
 		}
 		$response->status = 200;
-		$response->info = 'bonjour '.$userEnv['pseudoInGame'].' ('.$userEnv['email'].') bienvenue dans le jeux '.$userEnv['game']
-		.'. vous m avez dit: '.$texts['originalText'];
+		$response->info = 'bonjour '.$userEnv->pseudoInGame.' ('.$userEnv->email.') bienvenue dans le jeux '.$userEnv->game
+		.'. vous m avez dit: '.$question->originalText;
 		return $response;
 	}
 }
