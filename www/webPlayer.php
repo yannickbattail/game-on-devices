@@ -3,6 +3,24 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GOD - Game On Devices - new user?</title>
+<style type="text/css">
+.meText {
+  color: #000088;
+}
+
+.gameText {
+  color: #880000;
+}
+
+#response {
+  width: 500px;
+  height: 300px;
+  overflow: scroll;
+  background-color: #ffffee;
+  border-width: 2px;
+  border-style: inset;
+}
+</style>
 <script type="text/javascript">
 
 var authKey = '';
@@ -26,13 +44,12 @@ function auth() {
 	        authKey = obj.authKey;
 	        get('authDiv').style.display = 'none';
 	        get('speakDiv').style.display = 'block';
-	        get('response').value = '';
 	      } else {
 	        alert('no data.authKey: '+data);
 	      }
 	  } catch (e) {
-	    alert('exception: '+e);
-      alert('error: '+data.toSource());
+        alert('exception: '+e);
+        alert('error: '+data.toSource());
 	  }
 	}
 	
@@ -44,8 +61,8 @@ function auth() {
 	      return;
 	    }
 	  }
-	    // something went wrong
-	      alert(this.responseText+' ('+this.status+')');
+      // something went wrong
+      alert(this.responseText+' ('+this.status+')');
 	}
 	var client = new XMLHttpRequest();
 	client.onreadystatechange = handler;
@@ -65,7 +82,8 @@ function speak() {
     try {
         var data = eval('('+data+')');
         if (data.status) {
-          get('response').value += 'moi: '+getV('speakText')+"\nGame: "+data.message+"\n";
+          //get('response').value += 'moi: '+getV('speakText')+"\nGame: "+data.message+"\n";
+          get('response').innerHTML += '<div class="meText">Me: '+getV('speakText')+'</div><div class="gameText">Game: '+data.message+'</div>';
           get('response').scrollTop = 99999;
           get('speakText').value = '';
           get('info').innerHTML = data.info;
@@ -74,7 +92,7 @@ function speak() {
         }
     } catch (e) {
       alert('exception: '+e);
-    alert('error: '+data.toSource());
+      alert('error: '+data.toSource());
     }
   }
   
@@ -83,9 +101,10 @@ function speak() {
       if(this.status == 200 && this.responseText != null) {
         // success!
         processData(this.responseText);
+        return;
       }
-      // something went wrong
-      processData(null);
+	  // something went wrong
+      alert('oups '+this.responseText+' ('+this.status+')');
     }
   }
   if (getV('speakText')) {
@@ -135,7 +154,7 @@ function speak() {
     </table>
   </div>
   <div id="speakDiv" style="display: none;">
-    <textarea id="response" cols="100" rows="10"></textarea><br />
+    <div id="response"></div>
     <input type="text" id="speakText" value="" onkeydown="keySpeak(event)" /> <input type="button" name="submit" value="Speak" onclick="speak()" />
     <div id="info"></div>
   </div>

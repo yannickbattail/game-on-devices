@@ -1,8 +1,10 @@
 <?php
 
-session_start();
+include_once 'db_json/db_json_lib.php';
 
-include 'db_json/db_json_lib.php';
+function debugLog($string, $file, $line) {
+	file_put_contents('log.log', date(DATE_W3C).' '.$file.':'.$line.' '.$string.PHP_EOL, FILE_APPEND);
+}
 
 function getInputParams() {
 	$params = array();
@@ -43,7 +45,7 @@ function checkAuthentication($email, $password, $game, $pseudoInGame) {
 	if (!isset($db[$email]['games'][$game][$pseudoInGame])) {
 		throw new AuthenticationException('Wrong pseudo for the game: '.$game, 421);
 	}
-	return 'ABCDEF';
+	return uniqid();
 }
 
 function authentication($user, $pass, $game, $pseudoInGame) {
@@ -60,10 +62,14 @@ try {
 	$authKey = authentication($params['email'], $params['password'], $params['game'], $params['pseudoInGame']);
 
 	if ($authKey) {
-		$_SESSION['email'] = $params['email'];
-		$_SESSION['pseudoInGame'] = $params['pseudoInGame'];
-		$_SESSION['game'] = $params['game'];
-		$_SESSION['authKey'] = $authKey;
+		$db_sessions = loadDb('db_json/db_sessions.json');
+		$db_sessions[$authKey]['email'] = $params['email'];
+		$db_sessions[$authKey]['pseudoInGame'] = $params['pseudoInGame'];
+		$db_sessions[$authKey]['game'] = $params['game'];
+		$db_sessions[$authKey]['data'] = array();
+		$db_sessions[$authKey]['lastLogin'] = time();
+		$db_sessions[$authKey]['lastAccess'] = time();
+		saveDb($db_sessions, 'db_json/db_sessions.json');
 		if ($params['format'] == 'json') {
 			header("Content-Type: application/json");
 			echo json_encode(array('status' => 200, 'message' => 'authentication ok', 'authKey' => $authKey));
