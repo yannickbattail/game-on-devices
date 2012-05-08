@@ -2,6 +2,6 @@
 
 class Question {
 	public $originalText = '';
+	public $cleanedText = '';
 	public $splitedText = array();
-	public $synonyms = array();
 }

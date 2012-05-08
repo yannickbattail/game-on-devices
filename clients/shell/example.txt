@@ -1,0 +1,9 @@
+ybl@WKSCH-YBL01 ~
+$ ./god.sh http://127.0.0.1/god yannick@gmail.com tot miaou parrot
+bonjour
+bOnJoUr
+ca va ou bien
+cA Va oU BiEn
+./god.sh: finish ok bye
+
+ybl@WKSCH-YBL01 ~
