@@ -11,7 +11,7 @@ Class Parrot2 implements Game {
 	 */
 	public function speak(UserEnv $userEnv, Question $question) {
 		$response = new Response();
-		$syns = $question->synonyms;
+		$syns = Synonym::getSynonyms($question->originalText);
 		if (count($syns) == 0)
 			$response->message = $question->originalText;
 		else
