@@ -85,7 +85,17 @@ function outputInFormat(Response $response, $format) {
 		return json_encode($response);
 	} else if ($format == 'html') {
 		header("Content-Type: text/html");
-		return '<html><head><title>GOD</title></head><body><div class="status">'.$response->status.'</div><div class="message">'.$response->message.'</div><div class="info">'.$response->info.'</div></body>';
+		$ret = '<html><head><title>GOD</title></head><body>';
+		$ret .= '<div class="status">'.$response->status.'</div>';
+		$ret .= '<div class="message">'.$response->message.'</div>';
+		$ret .= '<div class="info">'.$response->info.'</div>';
+		$ret .= '<div class="choices">';
+		foreach ($response->choices as $choice) {
+			$ret .= '<div class="choice">'.$choice.'</div>';
+		}
+		$ret .= '</div>';
+		$ret .= '</body>';
+		return $ret;
 	} else {
 		header("Content-Type: text/plain");
 		return $response->message;
