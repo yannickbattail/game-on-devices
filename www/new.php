@@ -28,6 +28,7 @@
   	}
   	$db[$email]['games'][$game][$pseudoInGame] = array();
   	$db[$email]['games'][$game][$pseudoInGame]['creationDate'] = time();
+  	$db[$email]['games'][$game][$pseudoInGame]['data'] = array();
   	return $db;
   }
 

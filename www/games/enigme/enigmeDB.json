@@ -1,0 +1,28 @@
+{
+    "dur":[
+        {
+            "text":"Comment fait on un 4 triangle equilateraux avec 6 allumettes?",
+            "reponse":"tetraedre"
+        },
+        {
+            "text":"Qui est le mentor d Anakin?",
+            "reponse":"Obi Wan Kenobi"
+        }
+    ],
+    "moyen":[
+        {
+            "text":"Quel est l'etre qui marche sur quatre pattes au matin, sur deux a midi et sur trois le soir ?",
+            "reponse":"homme"
+        }
+    ],
+    "facile":[
+        {
+            "text":"quelle est la couleur du cheval blanc d henri IV?",
+            "reponse":"blanc"
+        },
+        {
+            "text":"Quelle est la reponse a la vie, l univers et tout le reste?",
+            "reponse":"42"
+        }
+    ]
+}
