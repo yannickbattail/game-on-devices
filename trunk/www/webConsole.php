@@ -83,10 +83,15 @@ function auth() {
 }
 
 function keySpeak(event) {
-  if (event.which == 13) {
+  if (event.which == 13) { // enter
     speak();
   }
-  return false;
+  if (event.which == 9) { // tab
+    get('response').innerHTML += ''+get('choices').innerHTML+'<br /> ';
+    get('response').scrollTop = 99999;
+    return false;
+  }
+  return true;
 }
 
 function speak() {
@@ -98,6 +103,7 @@ function speak() {
           get('response').innerHTML += getV('pseudoInGame')+'@'+getSel('game')+'&gt;'+getV('speakText')+'<br /> ';
           get('response').scrollTop = 99999;
           get('speakText').value = '';
+          get('choices').innerHTML = obj.choices.join(' ');
           get('info').innerHTML = obj.info;
           typeWriter(obj.message);
         } else {
@@ -187,12 +193,14 @@ function typeWriter(txt) {
       </tr>
     </table>
   </div>
-  <div id="speakDiv" style="display: none;">
+  <div id="speakDiv" style="display: none;" onclick="get('speakText').focus();">
     <div id="response">
       <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
     </div>
-    <span id="prompt"></span><input type="text" id="speakText" value="" onkeydown="keySpeak(event)" />
+    <span id="prompt"></span><input type="text" id="speakText" value="" onkeydown="return keySpeak(event)" />
+    <div id="choices" style="display: none;"></div>
     <div id="info"></div>
   </div>
+  Use [TAB] for choices.
 </body>
 </html>

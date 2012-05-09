@@ -87,6 +87,8 @@ function speak() {
           get('response').scrollTop = 99999;
           get('speakText').value = '';
           get('info').innerHTML = data.info;
+          var choices = data.choices.join(' | ');
+          get('choices').innerHTML = 'Possible choices: '+choices;
         } else {
           alert('no data.authKey: '+data);
         }
@@ -156,6 +158,7 @@ function speak() {
   <div id="speakDiv" style="display: none;">
     <div id="response"></div>
     <input type="text" id="speakText" value="" onkeydown="keySpeak(event)" /> <input type="button" name="submit" value="Speak" onclick="speak()" />
+    <div id="choices">Possible choices: </div>
     <div id="info"></div>
   </div>
 </body>

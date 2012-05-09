@@ -14,6 +14,7 @@ Class Parrot implements Game {
 		$response->status = 200;
 		$response->info = 'bonjour '.$userEnv->pseudoInGame.' ('.$userEnv->email.') bienvenue dans le jeux '.$userEnv->game
 		.'. vous m avez dit: '.$question->originalText;
+		$response->choices = array('tougoudou','meow','vrouuum');
 		return $response;
 	}
 	private function upAndDown($tring) {

@@ -23,11 +23,14 @@ wget "$BASE_URL/hello.php?email=$EMAIL&password=$PASSWORD&pseudoInGame=$PSEUDO&g
 
 AUTH_KEY=$(cat god_authKey.tmp)
 
+echo -n "$PSEUDO@$GAME>"
+
 while read line ; do
     wget "$BASE_URL/speak.php?authKey=$AUTH_KEY&question=$line" -q -O -
     echo 
+    echo -n "$PSEUDO@$GAME>"
 done
 
+echo 
 echo $0: finish ok bye
 exit 0
-
