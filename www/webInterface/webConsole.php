@@ -78,7 +78,7 @@ function auth() {
 	}
 	var client = new XMLHttpRequest();
 	client.onreadystatechange = handler;
-	client.open('GET', 'hello.php?email='+getV('email')+'&password='+getV('password')+'&pseudoInGame='+getV('pseudoInGame')+'&game='+getSel('game')+'&format=json');
+	client.open('GET', '../hello.php?email='+getV('email')+'&password='+getV('password')+'&pseudoInGame='+getV('pseudoInGame')+'&game='+getSel('game')+'&format=json');
 	client.send();
 }
 
@@ -129,7 +129,7 @@ function speak() {
   if (getV('speakText')) {
 	  var client = new XMLHttpRequest();
 	  client.onreadystatechange = handler;
-	  client.open('GET', 'speak.php?authKey='+authKey+'&format=json&question='+getV('speakText')+'');
+	  client.open('GET', '../speak.php?authKey='+authKey+'&format=json&question='+getV('speakText')+'');
 	  client.send();
   }
 }
@@ -174,9 +174,9 @@ function typeWriter(txt) {
         <th><label for="game">Game</label></th>
         <td><select id="game">
         <?php
-        $iterator = new DirectoryIterator('./games/');
+        $iterator = new DirectoryIterator('../games/');
         foreach ($iterator as $fileinfo) {
-        	if ($fileinfo->isDir() && !$fileinfo->isDot()) {
+        	if ($fileinfo->isDir() && !$fileinfo->isDot() && ($fileinfo->getFilename() != '.svn')) {
         		echo '<option value="'.$fileinfo->getFilename().'">'.$fileinfo->getFilename().'</option>';
         	}
         }
@@ -201,6 +201,6 @@ function typeWriter(txt) {
     <div id="choices" style="display: none;"></div>
     <div id="info"></div>
   </div>
-  Use [TAB] for choices.
+  <br />Use [TAB] for choices.
 </body>
 </html>
