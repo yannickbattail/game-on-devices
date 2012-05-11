@@ -29,8 +29,9 @@ Class Enigme implements Game {
 		$enigmeNb = $uGameData['categories'][$uGameData['categorie']];
 		if (isset($enigmeDB[$uGameData['categorie']][$enigmeNb])) {
 			$enigme = $enigmeDB[$uGameData['categorie']][$enigmeNb];
-			if (strcasecmp($question->originalText, $enigme['reponse']) == 0) {
-				$response->message .= 'Reponse exacte! ';
+			if ($this->isRightAnswer($question->originalText, $enigme['reponses'])) {
+				$response->message .= 'Reponse exacte! '.PHP_EOL;
+				$response->message .= $enigme['explication'].PHP_EOL;
 				$enigmeNb++;
 				$uGameData['categories'][$uGameData['categorie']] = $enigmeNb;
 			}
@@ -51,6 +52,15 @@ Class Enigme implements Game {
 		return $response;
 	}
 
+	private function isRightAnswer($text, $responses) {
+		foreach ($responses as $rep) {
+			if (strcasecmp($text, $rep) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private function changeCategorie($enigmeDB, Question $question) {
 		foreach ($enigmeDB as $catKey => $categorie) {
 			if (strcasecmp($question->originalText, 'change categorie '.$catKey) == 0) {
