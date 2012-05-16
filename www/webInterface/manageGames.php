@@ -2,14 +2,12 @@
 
 session_start();
 
-
-
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>GOD - Game On Devices - new user?</title>
+<title>GOD - Game On Devices - Manage your games.</title>
 </head>
 <body>
   <h1>GOD - Game On Devices</h1>
@@ -45,7 +43,7 @@ session_start();
   		}
   	}
   	echo '<table class="gameList" border="1">';
-	echo '<tr><th>Games</th><th>Pseudo</th></tr>';
+  	echo '<tr><th>Games</th><th>Pseudo</th></tr>';
   	foreach ($db[$_SESSION['email']]['games'] as $gameK => $valueData) {
   		echo '<tr><td>'.$gameK.'</td><td><ul>';
   		foreach ($valueData as $pseudoInGame => $v) {
@@ -81,6 +79,12 @@ session_start();
       </tr>
     </table>
   </form>
+  <div>
+    Administer you gateways:
+    <div>
+      <a href="../gatewayAdmin/gatewayPidgin/admin.php">Chat gateway with pidgin.</a>
+    </div>
+  </div>
   <?php
   } else {
   	?>
