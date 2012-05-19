@@ -15,14 +15,14 @@ Class Labyrinth implements Game {
 		if (!isset($ud['currentLab'])) {
 			$ud['currentLab'] = 1;
 			$ud['curX'] = 1;
-			$ud['curY'] = 0;
+			$ud['curY'] = 1;
 			$ud['prevX'] = 1;
-			$ud['prevY'] = 1;
+			$ud['prevY'] = 0;
 			$response->message .= 'Hi! Wellcome to the Labyrinth game: move through the Labyrinth and find the exit and go to the next level.'.PHP_EOL;
 		} else {
-			$lab = loadLab($labName);
-			$dirX = $ud['prevX'] - $ud['curX'];
-			$dirY = $ud['prevY'] - $ud['curY'];
+			$lab = $this->loadLab('lab'.$ud['currentLab']);
+			$dirX = $ud['curX'] - $ud['prevX'];
+			$dirY = $ud['curY'] - $ud['prevY'];
 			$newDir = $this->getMove($question, $dirX, $dirY);
 			if (!$newDir) {
 				$response->message .= 'oups invalid direction'.PHP_EOL;
@@ -32,37 +32,43 @@ Class Labyrinth implements Game {
 				if ($lab[$newX][$newY] == '#') {
 					$response->message .= 'You are going in a wall.'.PHP_EOL;
 				} else if ($lab[$newX][$newY] == 'x') {
-					$response->message .= 'You manage to get out of the Labyrinth. Go on to the next one'.PHP_EOL;
-					$ud['currentLab']++;
-					$ud['curX'] = 1;
-					$ud['curY'] = 0;
-					$ud['prevX'] = 1;
-					$ud['prevY'] = 1;
+					$lab = $this->loadLab('lab'.$ud['currentLab']);
+					if (!$lab) {
+						$response->message .= 'WIN! No more Labyrinth'.PHP_EOL;
+					} else {
+						$response->message .= 'WIN! You manage to get out of the Labyrinth. Go on to the next one'.PHP_EOL;
+						$ud['currentLab']++;
+						$ud['curX'] = 1;
+						$ud['curY'] = 1;
+						$ud['prevX'] = 1;
+						$ud['prevY'] = 0;
+					}
 				} else {
 					$ud['prevX'] = $ud['curX'];
 					$ud['prevY'] = $ud['curY'];
 					$ud['curX'] = $newX;
 					$ud['curY'] = $newY;
-					$dirX = $ud['prevX'] - $ud['curX'];
-					$dirY = $ud['prevY'] - $ud['curY'];
-					if ($lab[$newX+$dirY][$newY-$dirX])
-						$response->message .= 'you can go left, '.PHP_EOL;
-					if ($lab[$newX-$dirY][$newY+$dirX])
-						$response->message .= 'you can go right, '.PHP_EOL;
-					if ($lab[$newX+$dirX][$newY-$dirY])
-						$response->message .= 'you can go ahead, '.PHP_EOL;
-					if ($lab[$newX-$dirX][$newY-$dirY])
-						$response->message .= 'you can go back.'.PHP_EOL;
+					$response->message .= 'Moved!'.PHP_EOL;
 				}
 			}
+			$dirX = $ud['curX'] - $ud['prevX'];
+			$dirY = $ud['curY'] - $ud['prevY'];
+			if ($lab[$ud['curX']+$dirY][$ud['curY']-$dirX] != '#')
+				$response->message .= 'you can go left, '.PHP_EOL;
+			if ($lab[$ud['curX']-$dirY][$ud['curY']+$dirX] != '#')
+				$response->message .= 'you can go right, '.PHP_EOL;
+			if ($lab[$ud['curX']+$dirX][$ud['curY']+$dirY] != '#')
+				$response->message .= 'you can go ahead, '.PHP_EOL;
+			if ($lab[$ud['curX']-$dirX][$ud['curY']-$dirY] != '#')
+				$response->message .= 'you can go back.'.PHP_EOL;
 		}
 		$response->status = 200;
-		$response->info = 'x:'.$ud['curX'].' y:'.$ud['curY'];
+		$response->info = 'lab'.$ud['currentLab'].' '.'x:'.$ud['curX'].' y:'.$ud['curY'];
 		$response->choices[] = 'go right';
 		$response->choices[] = 'go left';
 		$response->choices[] = 'go ahead';
 		$response->choices[] = 'go back';
-		$this->saveUserGameData($db, $userEnv, $uGameData);
+		$this->saveUserGameData($db, $userEnv, $ud);
 		return $response;
 	}
 
@@ -86,7 +92,7 @@ Class Labyrinth implements Game {
 		if (strcasecmp($question->originalText, 'go left') == 0) {
 			return array($dirY, -$dirX);
 		}
-		if (strcasecmp($question->originalText, 'go left') == 0) {
+		if (strcasecmp($question->originalText, 'go right') == 0) {
 			return array(-$dirY, $dirX);
 		}
 		if (strcasecmp($question->originalText, 'go ahead') == 0) {
@@ -99,15 +105,18 @@ Class Labyrinth implements Game {
 	}
 
 	private function loadLab($labName) {
+		if (!file_exists('./games/labyrinth/lab/'.$labName.'.txt')) {
+			return false;
+		}
 		$labFile = file_get_contents('./games/labyrinth/lab/'.$labName.'.txt');
 		$lab = array();
-		$labFile = explode($labFile, "\n");
-		$l = 0;
+		$labFile = explode("\n", $labFile);
+		$ln = 0;
 		foreach ($labFile as $line) {
-			for ($i = 0, $i < strlen($line); $i++) {
-				$lab[$i][$l] = $line[$i];
+			for ($i = 0; $i < strlen($line); $i++) {
+				$lab[$i][$ln] = $line[$i];
 			}
-			$l++;
+			$ln++;
 		}
 		return $lab;
 	}
