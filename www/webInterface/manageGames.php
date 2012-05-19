@@ -21,7 +21,10 @@ session_start();
   		return false;
   	}
   }
-
+  if (isset($_REQUEST['logout'])) {
+  	unset($_SESSION['email']);
+  }
+  
   include '../db_json/db_json_lib.php';
   $db = loadDb('../db_json/db.json', true);
   if (isset($_POST['submit']) && auth($db, $_POST['email'], $_POST['password'])) {
@@ -42,6 +45,7 @@ session_start();
   			echo '<div>Pseudo '.$pseudoInGame.' created in game '.$game.'.</div>';
   		}
   	}
+  	echo '<h3>Hello '.$_SESSION['email'].'</h3><a href="manageGames.php?logout=1">disconnect</a>';
   	echo '<table class="gameList" border="1">';
   	echo '<tr><th>Games</th><th>Pseudo</th></tr>';
   	foreach ($db[$_SESSION['email']]['games'] as $gameK => $valueData) {
