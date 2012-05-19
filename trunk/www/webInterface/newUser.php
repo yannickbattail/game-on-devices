@@ -34,12 +34,12 @@ session_start();
 
   if (isset($_POST['submit'])) {
   	include '../db_json/db_json_lib.php';
-  	$db = loadDb('db_json/db.json', true);
+  	$db = loadDb('../db_json/db.json', true);
   	if (checkIfExist($db, $_POST['email'])) {
-  		echo 'Your already subscribe to this game with this pseudo.';
+  		echo 'This account already exists.';
   	} else {
   		$db = createNew($db, $_POST['email'], $_POST['password']);
-  		saveDb($db, 'db_json/db.json');
+  		saveDb($db, '../db_json/db.json');
   		echo 'Your user has been created.<br />';
 		echo 'Now login to <a href="manageGames.php">manage your games</a>';
   	}
