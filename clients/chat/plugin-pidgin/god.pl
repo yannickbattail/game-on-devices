@@ -1,6 +1,8 @@
 
 use Purple;
 use LWP::Simple;
+use JSON;
+use Data::Dumper;
 
 %PLUGIN_INFO = (
 	perl_api_version => 2,
@@ -14,12 +16,12 @@ use LWP::Simple;
 	unload => "plugin_unload"
 );
 
-$god_email = 'yannick@gmail.com';
-$god_pass = 'tot';
-$god_game = 'enigme';
-$god_pseudoInGame = 'miaou';
+$db_file = '/home/yannick/projects/god/www/gatewayAdmin/gatewayPidgin/imAddressDB.json';
 
-$god_authKey = '';
+
+%god_authKeys = {};
+
+%gateway_db = ();
 
 # Accounts
 sub account_connecting_cb
@@ -49,11 +51,16 @@ sub conv_received_msg
 	Purple::Debug::misc("GOD", "$data (" . $account->get_username() . ", $sender, $message, $flags)\n");
 	$im = $conv->get_im_data();
 	if ($im) { print "ok.\n"; } else { print "fail.\n"; }
-	
-	my $url = 'http://www.leserieux.fr/god/speak.php?authKey='.$god_authKey.'&question='.$message;
+	my $user = $account->get_username();
+	if (not $god_authKeys->{$user}) {
+		god_auth($user);
+	}
+	$authKey = $god_authKeys->{$user};
+	Purple::Debug::misc("GOD", "authKey :".$authKey."\n");
+	my $url = 'http://www.leserieux.fr/god/speak.php?authKey='.$authKey.'&question='.$message;
 	Purple::Debug::misc("GOD", "url :".$url."\n");
 	my $content = get $url;
-	Purple::Debug::misc("GOD", "text gotten: ".$content);
+	Purple::Debug::misc("GOD", "text response: ".$content."\n");
 	$im->send($content);
 }
 
@@ -62,15 +69,23 @@ sub conv_created {
 	Purple::Debug::misc("GOD", "conv_created ".$conv->name."\n");
 }
 
+sub god_auth {
+	my $username = shift;
+	#Purple::Debug::misc("GOD", "god_auth username ".$username."\n");
+	$gateway_db = decode_json(get "file://".$db_file);
+	my $info = $gateway_db->{$username};
+	#Purple::Debug::misc("GOD", "god_auth info ".Dumper($gateway_db->{$username})."\n");
+	my $url = 'http://www.leserieux.fr/god/hello.php?email='.$info->{email}.'&password='.$info->{password}.'&pseudoInGame='.$info->{pseudoInGame}.'&game='.$info->{game};
+	Purple::Debug::misc("GOD", "url :".$url."\n");
+	my $authKey = get $url;
+	Purple::Debug::misc("GOD", "authKey :".$authKey."\n");
+	$god_authKeys->{$username} = $authKey;
+}
+
 
 sub plugin_load
 {
 	my $plugin = shift;
-
-	my $url = 'http://www.leserieux.fr/god/hello.php?email='.$god_email.'&password='.$god_pass.'&pseudoInGame='.$god_pseudoInGame.'&game='.$god_game;
-	#Purple::Debug::misc("GOD", "url :".$url."\n");
-	$god_authKey = get $url;
-	Purple::Debug::misc("GOD", "authKey :".$god_authKey."\n");
 
 	# Hook to the signals
 
