@@ -16,8 +16,8 @@ use Data::Dumper;
 	unload => "plugin_unload"
 );
 
-$base_url = 'http://127.0.0.1/god/';
-#$base_url = 'http://www.leserieux.fr/god/';
+#$base_url = 'http://127.0.0.1/god/';
+$base_url = 'http://www.leserieux.fr/god/';
 
 %god_authKeys = {};
 

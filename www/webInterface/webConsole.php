@@ -46,6 +46,10 @@ function getSel(id) {
   return e.options[e.selectedIndex].value;
 }
 
+function escapeHTMLTags(str) {
+	return str.replace(new RegExp('&', 'gm'), '&amp;').replace(new RegExp('<', 'mg'), '&lt;').replace(new RegExp('>', 'mg'), '&gt;').replace(new RegExp('\n', 'mg'), '<br />');
+}
+
 function auth() {
 	function processData(data) {
 	  try {
@@ -103,8 +107,8 @@ function speak() {
           get('response').innerHTML += getV('pseudoInGame')+'@'+getSel('game')+'&gt;'+getV('speakText')+'<br /> ';
           get('response').scrollTop = 99999;
           get('speakText').value = '';
-          get('choices').innerHTML = obj.choices.join(' ');
-          get('info').innerHTML = obj.info;
+          get('choices').innerHTML = escapeHTMLTags(obj.choices.join(' '));
+          get('info').innerHTML = escapeHTMLTags(obj.info);
           typeWriter(obj.message);
         } else {
           alert('no obj.authKey: '+obj);
@@ -136,12 +140,12 @@ function speak() {
 
 function typeWriter(txt) {
   var text = txt;
-  var delay = 100;
+  var delay = 50;
   var charNb = 0;
   
   function type1char() {
     if (charNb < txt.length) {
-      get('response').innerHTML += txt[charNb];
+      get('response').innerHTML += escapeHTMLTags(txt[charNb]);
       get('response').scrollTop = 99999;
       charNb++;
       setTimeout(type1char, delay);

@@ -19,6 +19,7 @@
   background-color: #ffffee;
   border-width: 2px;
   border-style: inset;
+  font-family: monospace;
 }
 </style>
 <script type="text/javascript">
@@ -34,6 +35,10 @@ function getV(id) {
 function getSel(id) {
   var e = get(id);
   return e.options[e.selectedIndex].value;
+}
+
+function escapeHTMLTags(str) {
+	return str.replace(new RegExp('&', 'gm'), '&amp;').replace(new RegExp('<', 'mg'), '&lt;').replace(new RegExp('>', 'mg'), '&gt;').replace(new RegExp('\n', 'mg'), '<br />');
 }
 
 function auth() {
@@ -83,12 +88,12 @@ function speak() {
         var data = eval('('+data+')');
         if (data.status) {
           //get('response').value += 'moi: '+getV('speakText')+"\nGame: "+data.message+"\n";
-          get('response').innerHTML += '<div class="meText">Me: '+getV('speakText')+'</div><div class="gameText">Game: '+data.message+'</div>';
+          get('response').innerHTML += '<div class="meText">Me: '+getV('speakText')+'</div><div class="gameText">Game: '+escapeHTMLTags(data.message)+'</div>';
           get('response').scrollTop = 99999;
           get('speakText').value = '';
-          get('info').innerHTML = data.info;
+          get('info').innerHTML = escapeHTMLTags(data.info);
           var choices = data.choices.join(' | ');
-          get('choices').innerHTML = 'Possible choices: '+choices;
+          get('choices').innerHTML = 'Possible choices: '+escapeHTMLTags(choices);
         } else {
           alert('no data.authKey: '+data);
         }
@@ -116,6 +121,7 @@ function speak() {
 	  client.send();
   }
 }
+
 </script>
 </head>
 <body>
