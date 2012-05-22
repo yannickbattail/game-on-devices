@@ -54,13 +54,15 @@ Class Labyrinth implements Game {
 			$dirX = $ud['curX'] - $ud['prevX'];
 			$dirY = $ud['curY'] - $ud['prevY'];
 			if ($lab[$ud['curX']+$dirY][$ud['curY']-$dirX] != '#')
-				$response->message .= 'you can go left, '.PHP_EOL;
+			$response->message .= 'you can go left, '.PHP_EOL;
 			if ($lab[$ud['curX']-$dirY][$ud['curY']+$dirX] != '#')
-				$response->message .= 'you can go right, '.PHP_EOL;
+			$response->message .= 'you can go right, '.PHP_EOL;
 			if ($lab[$ud['curX']+$dirX][$ud['curY']+$dirY] != '#')
-				$response->message .= 'you can go ahead, '.PHP_EOL;
+			$response->message .= 'you can go ahead, '.PHP_EOL;
 			if ($lab[$ud['curX']-$dirX][$ud['curY']-$dirY] != '#')
-				$response->message .= 'you can go back.'.PHP_EOL;
+			$response->message .= 'you can go back.'.PHP_EOL;
+			$response->message .= PHP_EOL;
+			$response->message .= $this->printLab($lab, $ud['curX'], $ud['curY'], $dirX, $dirY);
 		}
 		$response->status = 200;
 		$response->info = 'lab'.$ud['currentLab'].' '.'x:'.$ud['curX'].' y:'.$ud['curY'];
@@ -103,6 +105,38 @@ Class Labyrinth implements Game {
 		}
 		return false;
 	}
+
+	private function printLab($lab, $curX, $curY, $dirX, $dirY) {
+		$ret = '';
+		for ($y = 0; $y < count($lab[0]); $y++) {
+			for ($x = 0; $x < count($lab); $x++) {
+				if (($curX == $x) && ($curY == $y)) {
+					$ret .= $this->printUser($dirX, $dirY);
+				} else {
+					$ret .= $lab[$x][$y];
+				}
+			}
+			$ret .= PHP_EOL;
+		}
+		return $ret;
+	}
+
+	private function printUser($dirX, $dirY) {
+		if ($dirX == 1) {
+			return '>';
+		}
+		if ($dirX == -1) {
+			return '<';
+		}
+		if ($dirY == 1) {
+			return 'v';
+		}
+		if ($dirY == -1) {
+			return '^';
+		}
+		return '@';
+	}
+
 
 	private function loadLab($labName) {
 		if (!file_exists('./games/labyrinth/lab/'.$labName.'.txt')) {
