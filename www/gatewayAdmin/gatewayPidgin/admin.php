@@ -32,15 +32,18 @@ Access denied, Please authenticate first. <a href="../../webInterface.php">here<
   && isset($_POST['game']) && !empty($_POST['game'])
   && isset($_POST['pseudoInGame']) && !empty($_POST['pseudoInGame'])
   && isset($_POST['imAddress']) && !empty($_POST['imAddress'])) {
-  	$email = $_SESSION['email'];
- 		$game = trim($_POST['game']);
- 		$pseudoInGame = trim($_POST['pseudoInGame']);
- 		$imAddress = trim($_POST['imAddress']);
- 		$db[$imAddress] = array(
-            "email" => $email,
-            "game" => $game,
-            "pseudoInGame" => $pseudoInGame
- 		);
+      $dbUser = loadDb('../../db_json/db.json');
+      $email = $_SESSION['email'];
+      $password = $dbUser[$email]['password'];
+      $game = trim($_POST['game']);
+      $pseudoInGame = trim($_POST['pseudoInGame']);
+      $imAddress = trim($_POST['imAddress']);
+      $db[$imAddress] = array(
+          "email" => $email,
+          "password" => $password,
+          "game" => $game,
+          "pseudoInGame" => $pseudoInGame
+      );
  		saveDb($db, 'imAddressDB.json');
  		echo '<div>Your address has been registered.</div>';
   }
