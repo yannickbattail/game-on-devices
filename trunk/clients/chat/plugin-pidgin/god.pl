@@ -9,15 +9,15 @@ use Data::Dumper;
 	name => "GOD Game-On-Devices",
 	version => "0.1",
 	summary => "plugin to connect to GOD interface",
-	description => "Chat with you game through the GOD",
+	description => "Chat with your game through the GOD",
 	author => "Yannick Battail <yannick.attail\@gmail.com>",
 	url => "http://code.google.com/p/game-on-devices/",
 	load => "plugin_load",
 	unload => "plugin_unload"
 );
 
-$db_file = '/home/yannick/projects/god/www/gatewayAdmin/gatewayPidgin/imAddressDB.json';
-
+$base_url = 'http://127.0.0.1/god/';
+#$base_url = 'http://www.leserieux.fr/god/';
 
 %god_authKeys = {};
 
@@ -51,13 +51,18 @@ sub conv_received_msg
 	Purple::Debug::misc("GOD", "$data (" . $account->get_username() . ", $sender, $message, $flags)\n");
 	$im = $conv->get_im_data();
 	if ($im) { print "ok.\n"; } else { print "fail.\n"; }
-	my $user = $account->get_username();
+	@u = split(/\//, $sender);
+	my $user = @u[0];
+	Purple::Debug::misc("GOD", "user :".$user."\n");
 	if (not $god_authKeys->{$user}) {
-		god_auth($user);
+		$god_authKeys->{$user} = god_auth($user);
+	}
+	if (not $god_authKeys->{$user} or ($god_authKeys->{$user} == '')) {
+		$im->send('you did not register your chat address ('.$user.') go to '.$base_url.'/webInterface/manageGames.php');
 	}
 	$authKey = $god_authKeys->{$user};
 	Purple::Debug::misc("GOD", "authKey :".$authKey."\n");
-	my $url = 'http://www.leserieux.fr/god/speak.php?authKey='.$authKey.'&question='.$message;
+	my $url = $base_url.'speak.php?authKey='.$authKey.'&question='.$message;
 	Purple::Debug::misc("GOD", "url :".$url."\n");
 	my $content = get $url;
 	Purple::Debug::misc("GOD", "text response: ".$content."\n");
@@ -72,14 +77,25 @@ sub conv_created {
 sub god_auth {
 	my $username = shift;
 	#Purple::Debug::misc("GOD", "god_auth username ".$username."\n");
-	$gateway_db = decode_json(get "file://".$db_file);
+	$gateway_db = decode_json(get $base_url."gatewayAdmin/gatewayPidgin/imAddressDB.json");
+	if (not $gateway_db) {
+		Purple::Debug::misc("GOD", "fail to laod db :".$base_url."gatewayAdmin/gatewayPidgin/imAddressDB.json"."\n");
+		return '';
+	}
 	my $info = $gateway_db->{$username};
 	#Purple::Debug::misc("GOD", "god_auth info ".Dumper($gateway_db->{$username})."\n");
-	my $url = 'http://www.leserieux.fr/god/hello.php?email='.$info->{email}.'&password='.$info->{password}.'&pseudoInGame='.$info->{pseudoInGame}.'&game='.$info->{game};
+	if (not $info) {
+		Purple::Debug::misc("GOD", "no such user in db\n");
+		return '';
+	}
+	my $url = $base_url.'hello.php?email='.$info->{email}.'&password='.$info->{password}.'&pseudoInGame='.$info->{pseudoInGame}.'&game='.$info->{game};
 	Purple::Debug::misc("GOD", "url :".$url."\n");
 	my $authKey = get $url;
 	Purple::Debug::misc("GOD", "authKey :".$authKey."\n");
-	$god_authKeys->{$username} = $authKey;
+	if (not $authKey) {
+		return '';
+	}
+	return $authKey;
 }
 
 
