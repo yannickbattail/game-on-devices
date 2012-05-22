@@ -30,6 +30,15 @@ function getParam($in, $param) {
 	return $in[$param];
 }
 
+function cleanOldSessions(array $db_sessions) {
+	foreach ($db_sessions as $sessionK => $session) {
+		if ($session['lastAccess'] < (time() - (60*60))) { // older than 1 hour
+			unset($db_sessions[$sessionK]);
+		}
+	}
+	return $db_sessions;
+}
+
 function checkAuthKey($authKey) {
 	$db_sessions = loadDb('db_json/db_sessions.json');
 	if (!isset($db_sessions[$authKey])) {
@@ -38,13 +47,13 @@ function checkAuthKey($authKey) {
 	if ($db_sessions[$authKey]['lastAccess'] < (time() - 3600)) {
 		throw new Exception('Authentication timeout. Must re-login.', 401);
 	}
-	$db_sessions[$authKey]['lastAccess'] = time();
 	$ue = new UserEnv();
 	$ue->email = $db_sessions[$authKey]['email'];
 	$ue->pseudoInGame = $db_sessions[$authKey]['pseudoInGame'];
 	$ue->game = $db_sessions[$authKey]['game'];
 	$ue->data = $db_sessions[$authKey]['data'];
 	$db_sessions[$authKey]['lastAccess'] = time();
+	$db_sessions = cleanOldSessions($db_sessions);
 	saveDb($db_sessions, 'db_json/db_sessions.json');
 	return $ue;
 }
@@ -107,7 +116,9 @@ try {
 	checkAuthKey($params['authKey']);
 	$userEnv = getUserEnv($params['authKey']);
 	$question = gameInterface($params['question']);
+	ob_start();
 	$response = execGame($userEnv, $question);
+	$response->info .= ob_get_clean();
 	print(outputInFormat($response, $params['format']));
 } catch (Exception $e) {
 	header("HTTP/1.1 500 Internal Server Error");

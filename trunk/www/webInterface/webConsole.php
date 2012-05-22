@@ -70,11 +70,11 @@ function auth() {
 	    if(this.status == 200 && this.responseText != null) {
 	      // success!
 	      processData(this.responseText);
-	      return;
+	    } else {
+	      // something went wrong
+	      alert(this.responseText+' ('+this.status+')');
 	    }
 	  }
-      // something went wrong
-      alert(this.responseText+' ('+this.status+')');
 	}
 	var client = new XMLHttpRequest();
 	client.onreadystatechange = handler;
@@ -120,10 +120,10 @@ function speak() {
       if(this.status == 200 && this.responseText != null) {
         // success!
         processData(this.responseText);
-        return;
+      } else {
+        // something went wrong
+        alert('oups '+this.responseText+' ('+this.status+')');
       }
-	  // something went wrong
-      alert('oups '+this.responseText+' ('+this.status+')');
     }
   }
   if (getV('speakText')) {
@@ -160,7 +160,7 @@ function typeWriter(txt) {
   <h1>GOD - Game On Devices</h1>
   <h2>who are you?</h2>
   <div id="authDiv">
-    New user? <a href="new.php">Subscribe!</a><br />
+    New user? <a href="newUser.php">Subscribe!</a><br />
     <table>
       <tr>
         <th><label for="email">Email</label></th>

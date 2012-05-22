@@ -8,10 +8,16 @@ session_start();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GOD - Game On Devices - Manage your games.</title>
+<style type="text/css">
+.error {
+  color: red;
+}
+</style>
 </head>
 <body>
   <h1>GOD - Game On Devices</h1>
   <h2>Manage your games.</h2>
+  <a href="../index.php">back to home.</a>
   <?php
 
   function auth($db, $email, $password) {
@@ -24,11 +30,13 @@ session_start();
   if (isset($_REQUEST['logout'])) {
   	unset($_SESSION['email']);
   }
-  
+
   include '../db_json/db_json_lib.php';
   $db = loadDb('../db_json/db.json', true);
   if (isset($_POST['submit']) && auth($db, $_POST['email'], $_POST['password'])) {
   	$_SESSION['email'] = $_POST['email'];
+  } else if (isset($_POST['submit'])) {
+  	echo '<div class="error">wrong pass or email.</div>';
   }
   if (isset($_SESSION['email']) && $_SESSION['email']) {
   	if (isset($_POST['newGame']) && isset($_POST['game']) && $_POST['game'] && isset($_POST['pseudoInGame']) && $_POST['pseudoInGame']) {
@@ -46,18 +54,9 @@ session_start();
   		}
   	}
   	echo '<h3>Hello '.$_SESSION['email'].'</h3><a href="manageGames.php?logout=1">disconnect</a>';
-  	echo '<table class="gameList" border="1">';
-  	echo '<tr><th>Games</th><th>Pseudo</th></tr>';
-  	foreach ($db[$_SESSION['email']]['games'] as $gameK => $valueData) {
-  		echo '<tr><td>'.$gameK.'</td><td><ul>';
-  		foreach ($valueData as $pseudoInGame => $v) {
-  			echo '<li>'.$pseudoInGame.'</li>';
-  		}
-  		echo '</ul></td></tr>';
-  	}
-  	echo '</table>';
   	?>
   <br />
+  Subscribe to a game:
   <form action="" method="post">
     <table>
       <tr>
@@ -83,6 +82,19 @@ session_start();
       </tr>
     </table>
   </form>
+  <table class="gameList" border="1">
+  <tr><th>Games</th><th>Pseudo</th></tr>
+    <?php
+    foreach ($db[$_SESSION['email']]['games'] as $gameK => $valueData) {
+      echo '<tr><td>'.$gameK.'</td><td><ul>';
+      foreach ($valueData as $pseudoInGame => $v) {
+        echo '<li>'.$pseudoInGame.'</li>';
+      }
+      echo '</ul></td></tr>';
+    }
+    ?>
+    </table>
+  
   <div>
     Administer you gateways:
     <div>
@@ -92,6 +104,7 @@ session_start();
   <?php
   } else {
   	?>
+  New user? <a href="newUser.php">Subscribe!</a><br />
   <form action="" method="post">
     <table>
       <tr>
