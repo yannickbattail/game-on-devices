@@ -13,8 +13,50 @@ session_start();
   color: red;
 }
 </style>
+<script type="text/javascript">
+
+function get(id) {
+  return document.getElementById(id);
+}
+function getV(id) {
+  return get(id).value;
+}
+function getSel(id) {
+  var e = get(id);
+  return e.options[e.selectedIndex].value;
+}
+
+function loadGameList() {
+  function processData(data) {
+    try {
+      get('game').innerHTML = data;
+    } catch (e) {
+      alert('exception: '+e);
+      alert('error: '+data.toSource());
+    }
+  }
+  
+  function handler() {
+    if(this.readyState == this.DONE) {
+      if(this.status == 200 && this.responseText != null) {
+        // success!
+        processData(this.responseText);
+      } else {
+        // something went wrong
+        alert('oups '+this.responseText+' ('+this.status+')');
+      }
+    }
+  }
+  if (get('game')) {
+	  var client = new XMLHttpRequest();
+	  client.onreadystatechange = handler;
+	  client.open('GET', '../gamesList.php?format=html');
+	  client.send();
+  }
+}
+</script>
 </head>
-<body>
+<body onload="loadGameList()">
   <h1>GOD - Game On Devices</h1>
   <h2>Manage your games.</h2>
   <a href="../index.php">back to home.</a>
@@ -61,16 +103,7 @@ session_start();
     <table>
       <tr>
         <th><label for="game">Game</label></th>
-        <td><select name="game">
-        <?php
-        $iterator = new DirectoryIterator('../games/');
-        foreach ($iterator as $fileinfo) {
-        	if ($fileinfo->isDir() && !$fileinfo->isDot() && ($fileinfo->getFilename() != '.svn')) {
-        		echo '<option>'.$fileinfo->getFilename().'</option>';
-        	}
-        }
-        ?>
-        </select></td>
+        <td><select name="game" id="game"></select></td>
       </tr>
       <tr>
         <th><label for="pseudoInGame">Pseudo in game</label></th>

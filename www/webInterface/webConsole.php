@@ -50,6 +50,33 @@ function escapeHTMLTags(str) {
 	return str.replace(new RegExp('&', 'gm'), '&amp;').replace(new RegExp('<', 'mg'), '&lt;').replace(new RegExp('>', 'mg'), '&gt;').replace(new RegExp('\n', 'mg'), '<br />');
 }
 
+function loadGameList() {
+  function processData(data) {
+    try {
+      get('game').innerHTML = data;
+    } catch (e) {
+      alert('exception: '+e);
+      alert('error: '+data.toSource());
+    }
+  }
+  
+  function handler() {
+    if(this.readyState == this.DONE) {
+      if(this.status == 200 && this.responseText != null) {
+        // success!
+        processData(this.responseText);
+      } else {
+        // something went wrong
+        alert('oups '+this.responseText+' ('+this.status+')');
+      }
+    }
+  }
+  var client = new XMLHttpRequest();
+  client.onreadystatechange = handler;
+  client.open('GET', '../gamesList.php?format=html');
+  client.send();
+}
+
 function auth() {
 	function processData(data) {
 	  try {
@@ -160,7 +187,7 @@ function typeWriter(txt) {
 
 </script>
 </head>
-<body>
+<body onload="loadGameList()">
   <h1>GOD - Game On Devices</h1>
   <h2>who are you?</h2>
   <div id="authDiv">
@@ -176,16 +203,7 @@ function typeWriter(txt) {
       </tr>
       <tr>
         <th><label for="game">Game</label></th>
-        <td><select id="game">
-        <?php
-        $iterator = new DirectoryIterator('../games/');
-        foreach ($iterator as $fileinfo) {
-        	if ($fileinfo->isDir() && !$fileinfo->isDot() && ($fileinfo->getFilename() != '.svn')) {
-        		echo '<option value="'.$fileinfo->getFilename().'">'.$fileinfo->getFilename().'</option>';
-        	}
-        }
-        ?>
-        </select></td>
+        <td><select id="game"></select></td>
       </tr>
       <tr>
         <th><label for="pseudoInGame">Pseudo in game</label></th>
