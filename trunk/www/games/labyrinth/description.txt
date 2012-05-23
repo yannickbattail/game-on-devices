@@ -1,0 +1,2 @@
+An ascii-art labyrinth game.
+move through the Labyrinth to find the exit and go to the next level.

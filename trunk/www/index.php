@@ -12,14 +12,11 @@
 <body>
   <h1>GOD - Game On Devices</h1>
   <h2>
-    Text adventure engine with gateway on chat (jabber, google Talk, facebook chat), email, sms, unix shell, smart phone (Android)
-    <br /> and plugable game interface
+    Text adventure engine with gateway on chat (jabber, google Talk, facebook chat), email, sms, unix shell, smart phone (Android) <br /> and plugable game interface
   </h2>
   <div>
-    You want to try?
-    <br /> <a href="./webInterface/newUser.php">Create an account!</a>
-    <br /> <a href="./webInterface/manageGames.php">choose a game and create a pseudo.</a>
-    <br /> <a href="./webInterface/webPlayer.php">Let's play here!</a> <a href="./webInterface/webConsole.php">or here for a geek version.</a>
+    You want to try? <br /> <a href="./webInterface/newUser.php">Create an account!</a> <br /> <a href="./webInterface/manageGames.php">choose a game and create a pseudo.</a> <br />
+    <a href="./webInterface/webPlayer.php">Let's play here!</a> <a href="./webInterface/webConsole.php">or here for a geek version.</a>
   </div>
   <br />
   <div>
@@ -29,7 +26,11 @@
     $iterator = new DirectoryIterator('./games/');
     foreach ($iterator as $fileinfo) {
     	if ($fileinfo->isDir() && !$fileinfo->isDot() && ($fileinfo->getFilename() != '.svn')) {
-    		echo '<li>'.$fileinfo->getFilename().'</li>';
+    		$classname = ucfirst($fileinfo->getFilename());
+    		if (file_exists('games/'.$fileinfo->getFilename().'/'.$classname.'.class.php')) {
+    			echo '<li><b>'.htmlentities(file_get_contents('games/'.$fileinfo->getFilename().'/name.txt')).':</b></li>'
+    			.htmlentities(file_get_contents('games/'.$fileinfo->getFilename().'/description.txt'));
+    		}
     	}
     }
     ?>

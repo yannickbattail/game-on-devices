@@ -41,17 +41,10 @@ function escapeHTMLTags(str) {
 	return str.replace(new RegExp('&', 'gm'), '&amp;').replace(new RegExp('<', 'mg'), '&lt;').replace(new RegExp('>', 'mg'), '&gt;').replace(new RegExp('\n', 'mg'), '<br />');
 }
 
-function auth() {
+function loadGameList() {
 	function processData(data) {
 	  try {
-	      var obj = eval('('+data+')');
-	      if (obj.authKey && (obj.authKey != '')) {
-	        authKey = obj.authKey;
-	        get('authDiv').style.display = 'none';
-	        get('speakDiv').style.display = 'block';
-	      } else {
-	        alert('no data.authKey: '+data);
-	      }
+	    get('game').innerHTML = data;
 	  } catch (e) {
         alert('exception: '+e);
         alert('error: '+data.toSource());
@@ -71,8 +64,42 @@ function auth() {
 	}
 	var client = new XMLHttpRequest();
 	client.onreadystatechange = handler;
-	client.open('GET', '../hello.php?email='+getV('email')+'&password='+getV('password')+'&pseudoInGame='+getV('pseudoInGame')+'&game='+getSel('game')+'&format=json');
+	client.open('GET', '../gamesList.php?format=html');
 	client.send();
+}
+
+function auth() {
+  function processData(data) {
+    try {
+        var obj = eval('('+data+')');
+        if (obj.authKey && (obj.authKey != '')) {
+          authKey = obj.authKey;
+          get('authDiv').style.display = 'none';
+          get('speakDiv').style.display = 'block';
+        } else {
+          alert('no data.authKey: '+data);
+        }
+    } catch (e) {
+        alert('exception: '+e);
+        alert('error: '+data.toSource());
+    }
+  }
+  
+  function handler() {
+    if(this.readyState == this.DONE) {
+      if(this.status == 200 && this.responseText != null) {
+        // success!
+        processData(this.responseText);
+      } else {
+          // something went wrong
+        alert('oups '+this.responseText+' ('+this.status+')');
+      }
+    }
+  }
+  var client = new XMLHttpRequest();
+  client.onreadystatechange = handler;
+  client.open('GET', '../hello.php?email='+getV('email')+'&password='+getV('password')+'&pseudoInGame='+getV('pseudoInGame')+'&game='+getSel('game')+'&format=json');
+  client.send();
 }
 
 function keySpeak(event) {
@@ -124,7 +151,7 @@ function speak() {
 
 </script>
 </head>
-<body>
+<body onload="loadGameList()">
   <h1>GOD - Game On Devices</h1>
   <h2>who are you?</h2>
   <div id="authDiv">
@@ -140,16 +167,7 @@ function speak() {
       </tr>
       <tr>
         <th><label for="game">Game</label></th>
-        <td><select id="game">
-        <?php
-        $iterator = new DirectoryIterator('../games/');
-        foreach ($iterator as $fileinfo) {
-        	if ($fileinfo->isDir() && !$fileinfo->isDot() && ($fileinfo->getFilename() != '.svn')) {
-        		echo '<option value="'.$fileinfo->getFilename().'">'.$fileinfo->getFilename().'</option>';
-        	}
-        }
-        ?>
-        </select></td>
+        <td><select id="game"></select></td>
       </tr>
       <tr>
         <th><label for="pseudoInGame">Pseudo in game</label></th>
@@ -164,7 +182,7 @@ function speak() {
   <div id="speakDiv" style="display: none;">
     <div id="response"></div>
     <input type="text" id="speakText" value="" onkeydown="keySpeak(event)" /> <input type="button" name="submit" value="Speak" onclick="speak()" />
-    <div id="choices">Possible choices: </div>
+    <div id="choices">Possible choices:</div>
     <div id="info"></div>
   </div>
 </body>
