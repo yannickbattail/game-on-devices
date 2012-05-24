@@ -1,0 +1,20 @@
+{
+    "a":{
+        "text":"You are a coridor. Your health is ok.",
+        "player":{
+            "health":"=100"
+        }
+    },
+    "b":{
+        "text":"The roof is on fire. You loose a bit of health (30).",
+        "player":{
+            "health":"-30"
+        }
+    },
+    "c":{
+        "text":"Ho un chickenPoulet! nom nom nom ! ... breeuub! Ha much better! (health +10).",
+        "player":{
+            "health":"+5"
+        }
+    }
+}

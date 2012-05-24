@@ -36,5 +36,6 @@
     ?>
     </ul>
   </div>
+  <div>GOD - Game On Devices project at <a href="http://code.google.com/p/game-on-devices/">google code</a></div>
 </body>
 </html>

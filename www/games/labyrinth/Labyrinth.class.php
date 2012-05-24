@@ -14,6 +14,7 @@ Class Labyrinth implements Game {
 		$ud = $this->getUserGameData($db, $userEnv);
 		if (!isset($ud['currentLab'])) {
 			$ud['currentLab'] = 1;
+			$ud['player'] = array('name' => $userEnv->pseudoInGame);
 			$ud['curX'] = 1;
 			$ud['curY'] = 1;
 			$ud['prevX'] = 1;
@@ -24,15 +25,17 @@ Class Labyrinth implements Game {
 			$dirX = $ud['curX'] - $ud['prevX'];
 			$dirY = $ud['curY'] - $ud['prevY'];
 			$newDir = $this->getMove($question, $dirX, $dirY);
-			if (!$newDir) {
+			if (($question->originalText == '!') || strcasecmp($question->originalText == 'info')) {
+				$response->message .= print_r($ud['player'], true);
+			} else if (!$newDir) {
 				$response->message .= 'oups invalid direction'.PHP_EOL;
 			} else {
 				$newX = $ud['curX'] + $newDir[0];
 				$newY = $ud['curY'] + $newDir[1];
 				if ($lab[$newX][$newY] == '#') {
 					$response->message .= 'You are going in a wall.'.PHP_EOL;
-				} else if ($lab[$newX][$newY] == 'x') {
-					$lab = $this->loadLab('lab'.$ud['currentLab']);
+				} else if ($lab[$newX][$newY] == '@') {
+					$lab = $this->loadLab('lab'.($ud['currentLab'] + 1));
 					if (!$lab) {
 						$response->message .= 'WIN! No more Labyrinth'.PHP_EOL;
 					} else {
@@ -48,7 +51,11 @@ Class Labyrinth implements Game {
 					$ud['prevY'] = $ud['curY'];
 					$ud['curX'] = $newX;
 					$ud['curY'] = $newY;
-					$response->message .= 'Moved!'.PHP_EOL;
+					if (ctype_alnum($lab[$newX][$newY])) {
+						$ud = $this->execAction($ud, $lab, $response);
+					} else {
+						$response->message .= 'Moved!'.PHP_EOL;
+					}
 				}
 			}
 			$dirX = $ud['curX'] - $ud['prevX'];
@@ -70,7 +77,10 @@ Class Labyrinth implements Game {
 		$response->choices[] = 'go left';
 		$response->choices[] = 'go ahead';
 		$response->choices[] = 'go back';
-		$this->saveUserGameData($db, $userEnv, $ud);
+		$response->choices[] = 'info';
+		if ($ud) { // to prevent to save an empty array or a NULL
+			$this->saveUserGameData($db, $userEnv, $ud);
+		}
 		return $response;
 	}
 
@@ -137,7 +147,6 @@ Class Labyrinth implements Game {
 		return '@';
 	}
 
-
 	private function loadLab($labName) {
 		if (!file_exists('./games/labyrinth/lab/'.$labName.'.txt')) {
 			return false;
@@ -153,5 +162,59 @@ Class Labyrinth implements Game {
 			$ln++;
 		}
 		return $lab;
+	}
+
+	private function execAction(array $ud, array $lab, Response $response){
+		$curChar = $lab[$ud['curX']][$ud['curY']];
+		$prevChar = $lab[$ud['prevX']][$ud['prevY']];
+		$ret = '';
+		$labActionDB = loadDb('./games/labyrinth/lab/lab'.$ud['currentLab'].'.json');
+		if (isset($labActionDB[$curChar])) {
+			$curAction = $labActionDB[$curChar];
+			$prevAction = array();
+			if (isset($labActionDB[$prevChar])) {
+				$prevAction = $labActionDB[$prevChar];
+			}
+			return $this->runAction($ud, $lab, $response, $curAction, $prevAction);
+		} else {
+			$response->message .= 'Nothing here.'.PHP_EOL;;
+			return $userData;
+		}
+		return $userData;
+	}
+
+	private function runAction(array $ud, array $lab, Response $response, array $curAction, array $prevAction = array()){
+		$response->message .= $curAction['text'].PHP_EOL;
+		foreach ($curAction['player'] as $key => $value) {
+			if ($value[0] == '+') {
+				$ud['player'][$key] += substr($value, 1);
+			} else if ($value[0] == '-') {
+				$ud['player'][$key] -= substr($value, 1);
+			} else if ($value[0] == '=') {
+				$ud['player'][$key] = substr($value, 1);
+			} else {
+				$ud['player'][$key] = $value;
+			}
+		}
+		if (isset($ud['player']['health'])) {
+			if ($ud['player']['health'] > 100) {
+				$ud['player']['health'] = 100;
+			}
+			if ($ud['player']['health'] <= 0) {
+				return $this->dead($ud);
+			}
+		}
+		return $ud;
+	}
+
+	private function dead(array $ud){
+		$response->message .= "You juste die! Tin tin tin tin! (game over musique).";
+		$ud['currentLab'] = 1;
+		//$ud['player'] = array();
+		$ud['curX'] = 1;
+		$ud['curY'] = 1;
+		$ud['prevX'] = 1;
+		$ud['prevY'] = 0;
+		return $ud;
 	}
 }
