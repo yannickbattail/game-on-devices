@@ -1,6 +1,6 @@
 {
     "a":{
-        "text":"You are a coridor. Your health is ok.",
+        "text":"You are in a corridor. Your health is ok.",
         "player":{
             "health":"=100"
         }
