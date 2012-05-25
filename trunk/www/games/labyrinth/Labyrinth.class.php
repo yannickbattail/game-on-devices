@@ -25,7 +25,7 @@ Class Labyrinth implements Game {
 			$dirX = $ud['curX'] - $ud['prevX'];
 			$dirY = $ud['curY'] - $ud['prevY'];
 			$newDir = $this->getMove($question, $dirX, $dirY);
-			if (($question->originalText == '!') || strcasecmp($question->originalText == 'info')) {
+			if (($question->originalText == '!') || (strcasecmp($question->originalText, 'info') == 0)) {
 				$response->message .= print_r($ud['player'], true);
 			} else if (!$newDir) {
 				$response->message .= 'oups invalid direction'.PHP_EOL;

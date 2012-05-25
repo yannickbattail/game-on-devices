@@ -1,0 +1,42 @@
+{
+    "0":{
+        "text":"Welcome to the labyrinth 3.",
+        "player":{
+            "gold":"=0"
+        }
+    },
+    "g":{
+        "text":"Ho my god a health fontain! Glou Glou Glou! (health +30)",
+        "player":{
+            "health":"+30"
+        }
+    },
+    "b":{
+        "text":"What the hell is that! A balrogue Level 42! Run away! RUN YOU FOOLS!",
+        "player":{
+        }
+    },
+    "B":{
+        "text":"You found a balrogue Level 42! I hope you won't suffer too much before dying.",
+        "player":{
+            "health":"-99"
+        }
+    },
+    "m":{
+        "text":"You said labyrinth? And what is there in a la labyrinth? A tip: It is an hybrid between cow and a human.",
+        "player":{
+        }
+    },
+    "M":{
+        "text":"Le wild minotaure appears. Minotaure uses Sodomy and it's very effective. (health -20)",
+        "player":{
+            "health":"-20"
+    	}
+    },
+    "t":{
+        "text":"Ho a tresor! (+100 gold)",
+        "player":{
+            "gold":"+100"
+        }
+    }
+}

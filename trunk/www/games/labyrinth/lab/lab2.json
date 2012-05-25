@@ -14,7 +14,12 @@
     "c":{
         "text":"Ho un chickenPoulet! nom nom nom ! ... breeuub! Ha much better! (health +10).",
         "player":{
-            "health":"+5"
+            "health":"+10"
+        }
+    },
+    "d":{
+        "text":"You see some ligh on the left is that the exit?",
+        "player":{
         }
     }
 }
