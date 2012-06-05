@@ -48,7 +48,7 @@ Class Labyrinth implements Game {
 			$this->dead(true);
 			$this->response->message .= 'Hi! Wellcome to the Labyrinth game: move through the Labyrinth and find the exit and go to the next level.'.PHP_EOL;
 		}
-		$lab = $this->loadLab();
+		$this->lab = $this->loadLab();
 		if ($this->ud['step']) {
 
 
@@ -56,7 +56,7 @@ Class Labyrinth implements Game {
 			if ($this->parseQuestion($question)) {
 
 			} else {
-				$this->response->message .= 'oups invalid direction'.PHP_EOL;
+				$this->response->message .= 'I don\'t understand what you said. what do you want to do'.PHP_EOL;
 			}
 			/*
 			 if ($lab[$this->ud['curX']+$dirY][$this->ud['curY']-$dirX] != '#')
@@ -145,14 +145,13 @@ Class Labyrinth implements Game {
 			if ($char == '#') {
 				$this->response->message .= 'You are going in a wall.'.PHP_EOL;
 			} else if ($char == '@') {
-				$lab = $this->loadLab('lab'.($this->ud['currentLab'] + 1));
-				if (!$lab) {
+				$newLab = $this->loadLab('lab'.($this->ud['currentLab'] + 1));
+				if (!$newLab) {
 					$this->response->message .= 'WIN! No more Labyrinth'.PHP_EOL;
-					return false;
 				} else {
 					$this->response->message .= 'WIN! You manage to get out of the Labyrinth. Go on to the next one'.PHP_EOL;
 					$this->ud['currentLab']++;
-					$this->loadLab();
+					$this->lab = $newLab;
 					$this->initLab();
 				}
 			} else {
@@ -167,7 +166,6 @@ Class Labyrinth implements Game {
 			}
 		} catch (Exception $e) {
 			$this->response->info .= $e->getMessage();
-			return false;
 		}
 		return true;
 	}
@@ -216,19 +214,21 @@ Class Labyrinth implements Game {
 			throw new Exception("cannot load lab".$this->ud['currentLab']);
 		}
 		$labFile = file_get_contents('./games/labyrinth/lab/lab'.$this->ud['currentLab'].'.txt');
-		$this->lab = array();
+		$lab = array();
 		$labFile = explode("\n", $labFile);
 		$ln = 0;
 		foreach ($labFile as $line) {
 			for ($i = 0; $i < strlen($line); $i++) {
-				$this->lab[$i][$ln] = $line[$i];
+				$lab[$i][$ln] = $line[$i];
 			}
 			$ln++;
 		}
+		return $lab;
 	}
 
 	private function initLab() {
 		$start = $this->findInLab('0');
+		print_r($start);
 		$this->curPos->setCurX($start['x']);
 		$this->curPos->setCurX($start['y']);
 		$this->curPos->setPrevX($start['x']);
@@ -303,7 +303,7 @@ Class Labyrinth implements Game {
 		$this->ud['player'] = array();
 		$this->ud['step'] = array();
 		$this->curPos = new Position();
-		$this->loadLab();
+		$this->lab = $this->loadLab();
 		$this->initLab();
 	}
 }
