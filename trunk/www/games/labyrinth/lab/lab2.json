@@ -1,4 +1,10 @@
 {
+    "0":{
+        "text":"Welcome to the labyrinth 2.",
+        "player":{
+            "health":"=100"
+            }
+    },
     "a":{
         "text":"You are in a corridor. Your health is ok.",
         "player":{
@@ -20,6 +26,7 @@
     "d":{
         "text":"You see some ligh on the left is that the exit?",
         "player":{
+            
         }
     }
 }
