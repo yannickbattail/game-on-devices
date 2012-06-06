@@ -2,7 +2,8 @@
     "0":{
         "text":"Welcome to the labyrinth 3.",
         "player":{
-            "gold":"=0"
+            "gold":"=0",
+            "health":"=100"
         }
     },
     "g":{
@@ -14,6 +15,7 @@
     "b":{
         "text":"What the hell is that! A balrogue Level 42! Run away! RUN YOU FOOLS!",
         "player":{
+            
         }
     },
     "B":{
@@ -25,18 +27,31 @@
     "m":{
         "text":"You said labyrinth? And what is there in a la labyrinth? A tip: It is an hybrid between cow and a human.",
         "player":{
+            
         }
     },
     "M":{
         "text":"Le wild minotaure appears. Minotaure uses Sodomy and it's very effective. (health -20)",
         "player":{
             "health":"-20"
-    	}
+        }
     },
     "t":{
         "text":"Ho a tresor! (+100 gold)",
         "player":{
             "gold":"+100"
         }
+    },
+    "c":{
+        "actionType":"Pay",
+        "text":"Ho a tresor! (+100 gold)",
+        "price":50,
+        "itemName":"golden dodo"
+    },
+    "d":{
+        "actionType":"Buy",
+        "text":"Ho a tresor! (+100 gold)",
+        "price":20,
+        "itemName":"sword"
     }
 }
