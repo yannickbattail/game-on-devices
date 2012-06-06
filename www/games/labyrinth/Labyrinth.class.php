@@ -4,19 +4,19 @@ require_once 'games/labyrinth/Position.class.php';
 
 Class Labyrinth implements Game {
 
-	private $response;
-	private $ud = array();
+	public $response;
+	public $ud = array();
 	/**
 	 * current position
 	 * @var Position
 	 */
-	private $curPos = null;
+	public $curPos = null;
 	/**
 	 * new position
 	 * @var Position
 	 */
-	private $newPos = null;
-	private $lab = array();
+	public $newPos = null;
+	public $lab = array();
 	private $fctMaping = array(
 	'!' => 'printInfo',
 	'info' => 'printInfo',
@@ -50,8 +50,32 @@ Class Labyrinth implements Game {
 		}
 		$this->lab = $this->loadLab();
 		if ($this->ud['step']) {
-
-
+			$newChar = $this->getLabChar($this->newPos);
+			$curChar = $this->getLabChar($this->curPos);
+			$this->response->info .= "Step: ".$this->ud['step']['action']." num:".$this->ud['step']['stepNum'].PHP_EOL;
+			$labActionDB = loadDb('./games/labyrinth/lab/lab'.$this->ud['currentLab'].'.json');
+			if (isset($this->ud['step']['action']) && isset($labActionDB[$this->ud['step']['action']])) {
+				$curAction = $labActionDB[$this->ud['step']['action']];
+				if (isset($curAction['actionType'])) {
+					$classname = $curAction['actionType'];
+					if (file_exists('games/labyrinth/actions/'.$classname.'.class.php')) {
+						require_once 'games/labyrinth/actions/'.$classname.'.class.php';
+						$actionObj = new $classname($curAction);
+						$actionObj->step($this, $question, $newChar, $curChar);
+					} else {
+						$this->ud['step'] = array();
+						$this->response->info .= "the actionType ".$curAction['actionType']." do not exists.";
+						$this->response->message .= 'Nothing here.'.PHP_EOL;
+						//$this->runAction($curAction, $newChar, $curChar);
+					}
+				} else {
+					$this->ud['step'] = array();
+					$this->response->message .= 'Nothing here.'.PHP_EOL;
+					//$this->runAction($curAction, $prevAction);
+				}
+			} else {
+				$this->response->message .= 'Nothing here.'.PHP_EOL;
+			}
 		} else {
 			if ($this->parseQuestion($question)) {
 
@@ -69,15 +93,18 @@ Class Labyrinth implements Game {
 			 $this->response->message .= 'you can go back.'.PHP_EOL;
 			 $this->response->message .= PHP_EOL;
 			 */
+		}
+		if (!$this->ud['step']) {
 			$this->response->message .= $this->printLab();
+			$this->response->choices[] = 'go right';
+			$this->response->choices[] = 'go left';
+			$this->response->choices[] = 'go ahead';
+			$this->response->choices[] = 'go back';
+			$this->response->choices[] = 'info';
 		}
 		$this->response->status = 200;
 		$this->response->info .= 'lab'.$this->ud['currentLab'].' '.'x:'.$this->curPos->getCurX().' y:'.$this->curPos->getCurY().' prevX:'.$this->curPos->getPrevX().' prevY:'.$this->curPos->getPrevY();
-		$this->response->choices[] = 'go right';
-		$this->response->choices[] = 'go left';
-		$this->response->choices[] = 'go ahead';
-		$this->response->choices[] = 'go back';
-		$this->response->choices[] = 'info';
+
 		$this->ud['position'] = $this->curPos;
 		if ($this->ud) { // to prevent to save an empty array or a NULL
 			$this->saveUserGameData($db, $userEnv, $this->ud);
@@ -247,7 +274,7 @@ Class Labyrinth implements Game {
 		return array();
 	}
 
-	private function execAction(){
+	private function execAction() {
 		$newChar = $this->getLabChar($this->newPos);
 		$curChar = $this->getLabChar($this->curPos);
 		$ret = '';
@@ -258,7 +285,19 @@ Class Labyrinth implements Game {
 			if (isset($labActionDB[$curChar])) {
 				$prevAction = $labActionDB[$curChar];
 			}
-			return $this->runAction($curAction, $prevAction);
+			if (isset($curAction['actionType'])) {
+				$classname = $curAction['actionType'];
+				if (file_exists('games/labyrinth/actions/'.$classname.'.class.php')) {
+					require_once 'games/labyrinth/actions/'.$classname.'.class.php';
+					$actionObj = new $classname($curAction, $prevAction);
+					return $actionObj->exec($this, $newChar, $curChar);
+				} else {
+					$this->response->info .= "the actionType ".$curAction['actionType']." do not exists.";
+					return $this->runAction($curAction, $newChar, $curChar);
+				}
+			} else {
+				return $this->runAction($curAction, $prevAction);
+			}
 		} else {
 			$this->response->message .= 'Nothing here.'.PHP_EOL;;
 			return true;
