@@ -1,1 +1,64 @@
-{"dur":[{"text":"Comment fait on un 4 triangle equilateraux avec 6 allumettes?","explication":"En 3D, une pyramide a base triangulaire.","reponse":"tetraedre","reponses":["tetraedre","t\u00e9tra\u00e8dre"]},{"text":"Qui est le mentor d'Anakin?","explication":"Reponse D ObiWan Kenobi","reponse":"Obi-Wan Kenobi","reponses":["Obi-Wan Kenobi","ObiWan Kenobi","Obi Wan Kenobi"]},{"text":"Vous pouvez m\u2019enlever une lettre ou m\u00eame deux. Et m\u00eame trois ou quatre. Je resterai le m\u00eame. Qui suis-je ?","explication":"Lettres postales","reponse":"facteur","reponses":["facteur"]}],"moyen":[{"text":"Quel est l'\u00eatre qui marche sur quatre pattes au matin, sur deux \u00e0 midi et sur trois le soir ?","explication":"A 4 pattes quand il est b\u00e9b\u00e9, 2 pattes \u00e0 l'age adulte et 2 pattes plus une canne = 3 pattes quand il est vieux.","reponse":"homme","reponses":["homme","l'homme","hummain","l'hummain"]}],"facile":[{"text":"quelle est la couleur du cheval blanc d'Henri IV?","explication":"Tu veux quand meme pas que je te fasse un dessin? Dessines moi un mouton.","reponse":"blanc","reponses":["blanc","blanche"]},{"text":"Quelle est la r\u00e9ponse \u00e0 la vie, l'univers et tout le reste?","explication":"Voir H2G2 le guide du voyageur galactic.","reponse":"42","reponses":["42","quarante deux"]}]}
+{
+    "dur":[
+        {
+            "text":"Comment fait on un 4 triangle equilateraux avec 6 allumettes?",
+            "explication":"En 3D, une pyramide a base triangulaire.",
+            "reponse":"tetraedre",
+            "reponses":[
+                "tetraedre",
+                "t\u00e9tra\u00e8dre"
+            ]
+        },
+        {
+            "text":"Qui est le mentor d'Anakin?",
+            "explication":"Reponse D ObiWan Kenobi",
+            "reponse":"Obi-Wan Kenobi",
+            "reponses":[
+                "Obi-Wan Kenobi",
+                "ObiWan Kenobi",
+                "Obi Wan Kenobi"
+            ]
+        },
+        {
+            "text":"Vous pouvez m\u2019enlever une lettre ou m\u00eame deux. Et m\u00eame trois ou quatre. Je resterai le m\u00eame. Qui suis-je ?",
+            "explication":"Lettres postales",
+            "reponse":"facteur",
+            "reponses":[
+                "facteur"
+            ]
+        }
+    ],
+    "moyen":[
+        {
+            "text":"Quel est l'\u00eatre qui marche sur quatre pattes au matin, sur deux \u00e0 midi et sur trois le soir ?",
+            "explication":"A 4 pattes quand il est b\u00e9b\u00e9, 2 pattes \u00e0 l'age adulte et 2 pattes plus une canne = 3 pattes quand il est vieux.",
+            "reponse":"homme",
+            "reponses":[
+                "homme",
+                "l'homme",
+                "hummain",
+                "l'hummain"
+            ]
+        }
+    ],
+    "facile":[
+        {
+            "text":"quelle est la couleur du cheval blanc d'Henri IV?",
+            "explication":"Tu veux quand meme pas que je te fasse un dessin? Dessines moi un mouton.",
+            "reponse":"blanc",
+            "reponses":[
+                "blanc",
+                "blanche"
+            ]
+        },
+        {
+            "text":"Quelle est la r\u00e9ponse \u00e0 la vie, l'univers et tout le reste?",
+            "explication":"Voir H2G2 le guide du voyageur galactic.",
+            "reponse":"42",
+            "reponses":[
+                "42",
+                "quarante deux"
+            ]
+        }
+    ]
+}

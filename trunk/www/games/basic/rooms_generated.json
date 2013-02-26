@@ -1,34 +1,36 @@
 [
     {
-      "name" : "bathroom",
-      "actions" : [
-        {
-          "id" : 1,
-          "verb" : "cut",
-          "nouns" : [
-              {
-                "id" : 1,
-                "value" : "tree"
-              }, {
-                "id" : 2,
-                "value" : "power"
-              }
-          ]
-        }
-      ]
-    }, {
-      "name" : "outside",
-      "actions" : [
-        {
-          "id" : 1,
-          "verb" : "plant",
-          "nouns" : [
+        "name":"bathroom",
+        "actions":[
             {
-              "id" : 1,
-              "value" : "tree"
+                "id":1,
+                "verb":"cut",
+                "nouns":[
+                    {
+                        "id":1,
+                        "value":"tree"
+                    },
+                    {
+                        "id":2,
+                        "value":"power"
+                    }
+                ]
             }
-          ]
-        }
-      ]
+        ]
+    },
+    {
+        "name":"outside",
+        "actions":[
+            {
+                "id":1,
+                "verb":"plant",
+                "nouns":[
+                    {
+                        "id":1,
+                        "value":"tree"
+                    }
+                ]
+            }
+        ]
     }
 ]
