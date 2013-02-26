@@ -1,6 +1,8 @@
 {
     "0":{
         "text":"Welcome to the labyrinth 1.",
-        "player":{}
+        "player":{
+            
+        }
     }
 }
