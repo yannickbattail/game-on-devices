@@ -3,7 +3,7 @@
         "text":"Welcome to the labyrinth 2.",
         "player":{
             "health":"=100"
-        }
+            }
     },
     "a":{
         "text":"You are in a corridor. Your health is ok.",
